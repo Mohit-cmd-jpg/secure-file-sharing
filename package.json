@@ -1,0 +1,20 @@
+{
+    "name": "secure-file-sharing",
+    "version": "1.0.0",
+    "description": "Secure file sharing with MERN + Web3",
+    "scripts": {
+        "install:all": "cd server && npm install && cd ../client && npm install && cd ../contracts && npm install",
+        "dev:server": "cd server && npm run dev",
+        "dev:client": "cd client && npm run dev",
+        "build:client": "cd client && npm run build",
+        "deploy:contract": "cd contracts && npm run deploy"
+    },
+    "keywords": [
+        "mern",
+        "web3",
+        "ipfs",
+        "blockchain",
+        "file-sharing"
+    ],
+    "license": "MIT"
+}

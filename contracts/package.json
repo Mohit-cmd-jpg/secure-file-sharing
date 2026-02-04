@@ -1,0 +1,14 @@
+{
+    "name": "secure-file-sharing-contracts",
+    "version": "1.0.0",
+    "scripts": {
+        "compile": "npx hardhat compile",
+        "deploy": "npx hardhat run scripts/deploy.js --network sepolia",
+        "deploy:local": "npx hardhat run scripts/deploy.js --network localhost"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+        "hardhat": "^2.19.0",
+        "dotenv": "^16.3.1"
+    }
+}
