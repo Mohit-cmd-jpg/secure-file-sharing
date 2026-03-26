@@ -5,7 +5,6 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Upload from './pages/Upload'
 import SharedWithMe from './pages/SharedWithMe'
-import Admin from './pages/Admin'
 
 function App() {
     const isAuthenticated = () => {
@@ -33,9 +32,6 @@ function App() {
                 } />
                 <Route path="/shared-with-me" element={
                     <ProtectedRoute><SharedWithMe /></ProtectedRoute>
-                } />
-                <Route path="/admin" element={
-                    <ProtectedRoute><Admin /></ProtectedRoute>
                 } />
             </Routes>
         </BrowserRouter>

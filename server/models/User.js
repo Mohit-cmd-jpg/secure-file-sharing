@@ -22,10 +22,6 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         match: [/^(0x)?[0-9a-f]{40}$/i, 'Invalid Ethereum wallet address']
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
     createdAt: {
         type: Date,
         default: Date.now
