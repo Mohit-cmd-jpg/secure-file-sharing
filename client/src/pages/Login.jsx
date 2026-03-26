@@ -43,7 +43,15 @@ function Login() {
             const response = await login(formData)
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('user', JSON.stringify(response.data.user))
-            navigate('/dashboard')
+            
+            // Check if user is admin and redirect accordingly
+            if (response.data.user.isAdmin) {
+                localStorage.setItem('isAdmin', 'true')
+                navigate('/admin')
+            } else {
+                localStorage.setItem('isAdmin', 'false')
+                navigate('/dashboard')
+            }
         } catch (err) {
             setError(err.response?.data?.error || 'Login failed. Please check your credentials.')
         } finally {

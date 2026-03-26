@@ -351,6 +351,93 @@ router.post('/blockchain-revoke', auth, async (req, res) => {
     }
 });
 
+// Admin middleware to check if user is admin
+const isAdminMiddleware = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+
+        if (!user || !user.isAdmin) {
+            return res.status(403).json({ error: 'Admin access required' });
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+};
+
+// GET /files/admin/all - Get all files (admin only)
+router.get('/admin/all', isAdminMiddleware, async (req, res) => {
+    try {
+        const files = await File.find({}).populate('uploadedBy', 'email');
+        res.json({
+            files,
+            total: files.length
+        });
+    } catch (error) {
+        console.error('Error fetching files:', error);
+        res.status(500).json({ error: 'Failed to fetch files' });
+    }
+});
+
+// DELETE /files/admin/:fileId - Delete file (admin only)
+router.delete('/admin/:fileId', isAdminMiddleware, async (req, res) => {
+    try {
+        const { fileId } = req.params;
+
+        const file = await File.findByIdAndDelete(fileId);
+        if (!file) {
+            return res.status(404).json({ error: 'File not found' });
+        }
+
+        res.json({ 
+            message: 'File deleted successfully',
+            fileId: file._id,
+            filename: file.filename
+        });
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        res.status(500).json({ error: 'Failed to delete file' });
+    }
+});
+
+// POST /files/admin/:fileId/revoke - Revoke file access (admin only)
+router.post('/admin/:fileId/revoke', isAdminMiddleware, async (req, res) => {
+    try {
+        const { fileId } = req.params;
+        const { userEmail } = req.body;
+
+        if (!userEmail) {
+            return res.status(400).json({ error: 'User email is required' });
+        }
+
+        const file = await File.findById(fileId);
+        if (!file) {
+            return res.status(404).json({ error: 'File not found' });
+        }
+
+        // Remove user from sharedWith array
+        file.sharedWith = file.sharedWith.filter(share => share.email !== userEmail);
+        await file.save();
+
+        res.json({
+            message: `Access revoked for ${userEmail}`,
+            fileId: file._id,
+            filename: file.filename
+        });
+    } catch (error) {
+        console.error('Error revoking access:', error);
+        res.status(500).json({ error: 'Failed to revoke access' });
+    }
+});
+
 // Error handling middleware for multer
 router.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {

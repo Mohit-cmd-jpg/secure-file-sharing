@@ -5,25 +5,25 @@
 }
 
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --secondary: #10b981;
-  --background: #0f172a;
-  --surface: #1e293b;
-  --surface-light: #334155;
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --error: #ef4444;
-  --success: #22c55e;
-  --border: #475569;
-  --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --primary: #7c3aed;
+  --primary-dark: #6d28d9;
+  --secondary: #06b6d4;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-light: #f1f5f9;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --error: #dc2626;
+  --success: #059669;
+  --border: #e2e8f0;
+  --gradient: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
   
   /* Additional CSS variables for consistency */
-  --color-error: #ef4444;
-  --color-success: #22c55e;
-  --color-primary: #6366f1;
-  --bg-secondary: #334155;
-  --border-color: #475569;
+  --color-error: #dc2626;
+  --color-success: #059669;
+  --color-primary: #7c3aed;
+  --bg-secondary: #f1f5f9;
+  --border-color: #e2e8f0;
 }
 
 body {
@@ -104,8 +104,8 @@ a:hover {
 .form-group select {
   width: 100%;
   padding: 0.875rem 1rem;
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: var(--surface);
+  border: 2px solid var(--border);
   border-radius: 8px;
   color: var(--text);
   font-size: 1rem;
@@ -116,7 +116,7 @@ a:hover {
 .form-group select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
 }
 
 .form-group input::placeholder {
@@ -639,7 +639,7 @@ select {
   align-items: center;
   justify-content: center;
   padding: 3rem 0;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -649,7 +649,7 @@ select {
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
   border-radius: 50%;
   top: -100px;
   right: -100px;
@@ -661,7 +661,7 @@ select {
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
   border-radius: 50%;
   bottom: -100px;
   left: -100px;
@@ -787,7 +787,7 @@ select {
 /* How It Works Section */
 .how-it-works {
   padding: 4rem 0;
-  background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.05) 0%, transparent 100%);
 }
 
 .steps-grid {
