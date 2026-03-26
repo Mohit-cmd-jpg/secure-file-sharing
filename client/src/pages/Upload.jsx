@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ethers } from 'ethers'
-import { uploadFile, updateBlockchainId } from '../services/api'
-import { getContract } from '../services/contract'
+import { uploadFile } from '../services/api'
 
 function Upload() {
     const navigate = useNavigate()
@@ -13,8 +11,7 @@ function Upload() {
     const [progress, setProgress] = useState(0)
     const [error, setError] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
-    const [registerOnChain, setRegisterOnChain] = useState(false)
-    const [uploadStage, setUploadStage] = useState('') // '', 'uploading', 'blockchain', 'finalizing'
+    const [uploadStage, setUploadStage] = useState('')
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
     const ALLOWED_TYPES = ['application/pdf', 'image/*', 'video/*', 'application/msword', 'application/vnd.ms-excel', 'text/plain', 'application/zip']
@@ -96,66 +93,15 @@ function Upload() {
         setUploadStage('uploading')
 
         try {
-            // Stage 1: Upload to IPFS
+            // Upload to IPFS
             const formData = new FormData()
             formData.append('file', selectedFile)
 
-            setProgress(40)
+            setProgress(50)
             const response = await uploadFile(formData)
             const uploadedFile = response.data.file
 
-            setSuccessMessage(`✓ File uploaded to IPFS`)
-            setProgress(50)
-
-            // Stage 2: Register on blockchain if requested
-            if (registerOnChain) {
-                setUploadStage('blockchain')
-                setProgress(60)
-
-                if (typeof window.ethereum === 'undefined') {
-                    throw new Error('MetaMask not detected. Please install MetaMask to register on blockchain.')
-                }
-
-                setProgress(70)
-
-                // Request account access
-                const accounts = await window.ethereum.request({
-                    method: 'eth_requestAccounts'
-                })
-
-                const provider = new ethers.BrowserProvider(window.ethereum)
-                const signer = await provider.getSigner()
-                const contract = getContract(signer)
-
-                setProgress(75)
-
-                // Call blockchain addFile
-                const tx = await contract.addFile(uploadedFile.ipfsHash)
-                setProgress(85)
-
-                // Wait for transaction to be mined
-                const receipt = await tx.wait()
-
-                if (!receipt || !receipt.status) {
-                    throw new Error('Blockchain transaction failed')
-                }
-
-                // Get the file ID from the contract
-                const fileCount = await contract.fileCount()
-
-                setProgress(90)
-
-                // Update backend with blockchain ID
-                await updateBlockchainId({
-                    fileId: uploadedFile.id,
-                    blockchainFileId: Number(fileCount)
-                })
-
-                setSuccessMessage(`✓ File registered on blockchain (ID: ${fileCount})`)
-            }
-
             setProgress(100)
-            setUploadStage('finalizing')
             setSuccessMessage(`✓ File "${selectedFile.name}" uploaded successfully!`)
 
             setTimeout(() => {
@@ -175,8 +121,7 @@ function Upload() {
 
     const getProgressLabel = () => {
         if (progress === 0) return 'Ready'
-        if (progress < 50) return 'Uploading to IPFS...'
-        if (progress < 90) return 'Registering on blockchain...'
+        if (progress < 100) return 'Uploading to IPFS...'
         return 'Finalizing...'
     }
 
@@ -269,22 +214,6 @@ function Upload() {
 
                 {selectedFile && !uploading && (
                     <div style={{ marginTop: '1.5rem' }}>
-                        <div className="form-group">
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={registerOnChain}
-                                    onChange={(e) => setRegisterOnChain(e.target.checked)}
-                                    style={{ width: 'auto' }}
-                                />
-                                <span>
-                                    <strong>Register on Blockchain</strong>
-                                    <br />
-                                    <small style={{ color: 'var(--text-muted)' }}>Store file hash on Ethereum for integrity verification (requires MetaMask)</small>
-                                </span>
-                            </label>
-                        </div>
-
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                             <button
                                 className="btn btn-primary"

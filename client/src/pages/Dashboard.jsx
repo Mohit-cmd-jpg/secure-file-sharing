@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ethers } from 'ethers'
-import { getMyFiles, shareFile, revokeAccess, grantBlockchainAccess, revokeBlockchainAccess } from '../services/api'
-import { getContract } from '../services/contract'
+import { getMyFiles, shareFile, revokeAccess, deleteFile } from '../services/api'
 import FilePreviewModal from '../components/FilePreviewModal'
 
 function Dashboard() {
@@ -89,114 +87,15 @@ function Dashboard() {
         }
     }
 
-    const handleGrantBlockchainAccess = async (e) => {
-        e.preventDefault()
+    const handleDelete = async (fileId, fileName) => {
+        if (!window.confirm(`Are you sure you want to delete "${fileName}"? This action cannot be undone.`)) return
 
-        if (!validateWalletAddress(grantWallet)) {
-            setError('Please enter a valid Ethereum wallet address (0x...)')
-            return
-        }
-
-        if (!grantModal.blockchainFileId) {
-            setError('This file is not registered on blockchain')
-            return
-        }
-
-        setGranting(true)
         try {
-            if (typeof window.ethereum === 'undefined') {
-                throw new Error('Please install MetaMask')
-            }
-
-            const provider = new ethers.BrowserProvider(window.ethereum)
-            const signer = await provider.getSigner()
-            const contract = getContract(signer)
-
-            // Call blockchain grantAccess
-            const tx = await contract.grantAccess(grantModal.blockchainFileId, grantWallet)
-            const receipt = await tx.wait()
-
-            // Record on backend
-            await grantBlockchainAccess({
-                fileId: grantModal.id,
-                walletAddress: grantWallet,
-                transactionHash: receipt.hash
-            })
-
-            setGrantModal(null)
-            setGrantWallet('')
-            setError('')
+            await deleteFile(fileId)
             await fetchFiles()
-        } catch (err) {
-            setError(err.message || 'Failed to grant blockchain access')
-        } finally {
-            setGranting(false)
-        }
-    }
-
-    const handleRevokeBlockchainAccess = async (walletAddress) => {
-        if (!window.confirm(`Revoke blockchain access for ${walletAddress}?`)) return
-
-        const file = shareModal || grantModal
-        if (!file?.blockchainFileId) {
-            setError('This file is not registered on blockchain')
-            return
-        }
-
-        setGranting(true)
-        try {
-            if (typeof window.ethereum === 'undefined') {
-                throw new Error('Please install MetaMask')
-            }
-
-            const provider = new ethers.BrowserProvider(window.ethereum)
-            const signer = await provider.getSigner()
-            const contract = getContract(signer)
-
-            const tx = await contract.revokeAccess(file.blockchainFileId, walletAddress)
-            const receipt = await tx.wait()
-
-            await revokeBlockchainAccess({
-                fileId: file.id,
-                walletAddress,
-                transactionHash: receipt.hash
-            })
-
-            setGrantModal(null)
-            setGrantWallet('')
             setError('')
-            await fetchFiles()
         } catch (err) {
-            setError(err.message || 'Failed to revoke blockchain access')
-        } finally {
-            setGranting(false)
-        }
-    }
-
-    const verifyOnBlockchain = async (file) => {
-        try {
-            if (typeof window.ethereum === 'undefined') {
-                setVerifyResult({ success: false, message: 'Please install MetaMask' })
-                return
-            }
-
-            const provider = new ethers.BrowserProvider(window.ethereum)
-            const contract = getContract(provider)
-
-            const result = await contract.verifyHash(file.ipfsHash)
-
-            if (result[0]) {
-                setVerifyResult({
-                    success: true,
-                    message: `✓ Verified!`,
-                    owner: result[1],
-                    timestamp: new Date(Number(result[2]) * 1000).toLocaleString()
-                })
-            } else {
-                setVerifyResult({ success: false, message: 'File not registered on blockchain' })
-            }
-        } catch (err) {
-            setVerifyResult({ success: false, message: 'Verification failed: ' + err.message })
+            setError('Failed to delete file')
         }
     }
 
@@ -309,11 +208,7 @@ function Dashboard() {
 
                                 <div className="file-meta">
                                     <span>📅 {new Date(file.uploadedAt).toLocaleDateString()}</span>
-                                    {file.blockchainFileId ? (
-                                        <span className="verified-badge" title={`Blockchain File ID: ${file.blockchainFileId}`}>⛓️ On-chain #{file.blockchainFileId}</span>
-                                    ) : (
-                                        <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>💾 Local</span>
-                                    )}
+                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>💾 IPFS Storage</span>
                                 </div>
 
                                 {file.sharedWith.length > 0 && (
@@ -360,21 +255,12 @@ function Dashboard() {
                                     >
                                         Share
                                     </button>
-                                    {file.blockchainFileId && (
-                                        <button
-                                            className="btn btn-secondary btn-sm"
-                                            onClick={() => setGrantModal(file)}
-                                            title="Grant blockchain access"
-                                        >
-                                            Grant 🔐
-                                        </button>
-                                    )}
                                     <button
-                                        className="btn btn-secondary btn-sm"
-                                        onClick={() => verifyOnBlockchain(file)}
-                                        title="Verify file on blockchain"
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleDelete(file.id, file.name)}
+                                        title="Delete file"
                                     >
-                                        Verify
+                                        🗑️ Delete
                                     </button>
                                 </div>
                             </div>
@@ -417,50 +303,6 @@ function Dashboard() {
                                     disabled={sharing}
                                 >
                                     {sharing ? '⏳ Sharing...' : 'Share'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* Grant Blockchain Access Modal */}
-            {grantModal && (
-                <div className="modal-backdrop" onClick={() => { setGrantModal(null); setError(''); }}>
-                    <div className="modal" onClick={(e) => e.stopPropagation()}>
-                        <h2>Grant Blockchain Access</h2>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                            Grant access to "{grantModal.name}" on blockchain
-                        </p>
-                        <form onSubmit={handleGrantBlockchainAccess}>
-                            <div className="form-group">
-                                <label>Wallet Address</label>
-                                <input
-                                    type="text"
-                                    placeholder="0x..."
-                                    value={grantWallet}
-                                    onChange={(e) => setGrantWallet(e.target.value)}
-                                    disabled={granting}
-                                    required
-                                />
-                                <small style={{ color: 'var(--text-muted)' }}>Enter Ethereum wallet address (0x...)</small>
-                            </div>
-                            <div className="modal-actions">
-                                <button 
-                                    type="button" 
-                                    className="btn btn-secondary" 
-                                    onClick={() => { setGrantModal(null); setGrantWallet(''); }}
-                                    disabled={granting}
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="submit" 
-                                    className="btn btn-primary" 
-                                    style={{ width: 'auto' }}
-                                    disabled={granting}
-                                >
-                                    {granting ? '⏳ Granting...' : 'Grant Access'}
                                 </button>
                             </div>
                         </form>

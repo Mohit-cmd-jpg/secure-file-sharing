@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ethers } from 'ethers'
 import { getSharedFiles } from '../services/api'
-import { getContract } from '../services/contract'
 import FilePreviewModal from '../components/FilePreviewModal'
 
 function SharedWithMe() {
@@ -11,7 +9,6 @@ function SharedWithMe() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [previewModal, setPreviewModal] = useState(null)
-    const [verifyResult, setVerifyResult] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [sortBy, setSortBy] = useState('date') // date, name, owner
 
@@ -37,33 +34,6 @@ function SharedWithMe() {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         navigate('/login')
-    }
-
-    const verifyOnBlockchain = async (file) => {
-        try {
-            if (typeof window.ethereum === 'undefined') {
-                setVerifyResult({ success: false, message: 'Please install MetaMask' })
-                return
-            }
-
-            const provider = new ethers.BrowserProvider(window.ethereum)
-            const contract = getContract(provider)
-
-            const result = await contract.verifyHash(file.ipfsHash)
-
-            if (result[0]) {
-                setVerifyResult({
-                    success: true,
-                    message: `✓ Verified!`,
-                    owner: result[1],
-                    timestamp: new Date(Number(result[2]) * 1000).toLocaleString()
-                })
-            } else {
-                setVerifyResult({ success: false, message: 'File not registered on blockchain' })
-            }
-        } catch (err) {
-            setVerifyResult({ success: false, message: 'Verification failed: ' + err.message })
-        }
     }
 
     const formatSize = (bytes) => {
@@ -126,17 +96,6 @@ function SharedWithMe() {
                     <div className="alert alert-error">
                         {error}
                         <button onClick={() => setError('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
-                    </div>
-                )}
-
-                {verifyResult && (
-                    <div className={`alert ${verifyResult.success ? 'alert-success' : 'alert-error'}`}>
-                        <div>
-                            <strong>{verifyResult.message}</strong>
-                            {verifyResult.timestamp && <p style={{ marginTop: '0.5rem' }}>📅 {verifyResult.timestamp}</p>}
-                            {verifyResult.owner && <p style={{ marginTop: '0.25rem', fontSize: '0.9rem', wordBreak: 'break-all' }}>👤 {verifyResult.owner}</p>}
-                        </div>
-                        <button onClick={() => setVerifyResult(null)} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
                     </div>
                 )}
 
@@ -206,13 +165,6 @@ function SharedWithMe() {
                                         title="Preview file"
                                     >
                                         👁️ Preview
-                                    </button>
-                                    <button
-                                        className="btn btn-secondary btn-sm"
-                                        onClick={() => verifyOnBlockchain(file)}
-                                        title="Verify file on blockchain"
-                                    >
-                                        Verify
                                     </button>
                                 </div>
                             </div>

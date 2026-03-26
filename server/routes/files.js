@@ -234,6 +234,25 @@ router.post('/share', auth, async (req, res) => {
     }
 });
 
+// DELETE /files/:id - Delete a file
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const file = await File.findOne({ _id: id, owner: req.userId });
+        if (!file) {
+            return res.status(404).json({ error: 'File not found or you do not have permission to delete it' });
+        }
+
+        await File.deleteOne({ _id: id });
+
+        res.json({ message: 'File deleted successfully' });
+    } catch (error) {
+        console.error('Delete file error:', error);
+        res.status(500).json({ error: 'Failed to delete file' });
+    }
+});
+
 // DELETE /files/revoke
 router.delete('/revoke', auth, async (req, res) => {
     try {
