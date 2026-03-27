@@ -123,21 +123,44 @@ router.post('/login', async (req, res) => {
 
 // DELETE /auth/account
 router.delete('/account', auth, async (req, res) => {
+    let session = null;
+    let transactionStarted = false;
     try {
-        // 1. Delete all files owned by the user
-        await File.deleteMany({ owner: req.userId });
-
-        // 2. Delete the user
-        const user = await User.findByIdAndDelete(req.userId);
+        // 1. Start session and transaction inside try block
+        session = await require('mongoose').startSession();
+        await session.startTransaction();
+        transactionStarted = true;
+        
+        // 2. Verify user exists first
+        const user = await User.findById(req.userId, null, { session });
         
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
+        // 3. Delete all files owned by the user (within transaction)
+        await File.deleteMany({ owner: req.userId }, { session });
+
+        // 4. Delete the user (within transaction)
+        await User.findByIdAndDelete(req.userId, { session });
+
+        // Commit transaction on success
+        if (session && transactionStarted) {
+            await session.commitTransaction();
+        }
         res.json({ message: 'Account and associated data deleted successfully' });
     } catch (error) {
+        // Abort transaction only if it was started
+        if (session && transactionStarted) {
+            await session.abortTransaction();
+        }
         console.error('Account deletion error:', error);
         res.status(500).json({ error: 'Failed to delete account' });
+    } finally {
+        // Clean up session if it exists
+        if (session) {
+            session.endSession();
+        }
     }
 });
 

@@ -53,7 +53,10 @@ function Dashboard() {
         try {
             setLoading(true)
             await deleteAccount()
-            handleLogout()
+            // Explicit cleanup after successful deletion
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            window.location.href = '/login'
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to delete account')
             setLoading(false)
