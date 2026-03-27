@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getMyFiles, shareFile, revokeAccess, deleteFile } from '../services/api'
+import { getMyFiles, shareFile, revokeAccess, deleteFile, deleteAccount } from '../services/api'
 import FilePreviewModal from '../components/FilePreviewModal'
 
 function Dashboard() {
@@ -38,6 +38,26 @@ function Dashboard() {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         navigate('/login')
+    }
+
+    const handleDeleteAccount = async () => {
+        const confirm1 = window.confirm("Are you sure you want to delete your entire account? This will permanently remove your profile and ALL your uploaded files. This action CANNOT be undone.")
+        if (!confirm1) return
+
+        const confirm2 = window.prompt("To confirm deletion, please type 'DELETE MY ACCOUNT' below:")
+        if (confirm2 !== 'DELETE MY ACCOUNT') {
+            alert("Confirmation text did not match. Account deletion cancelled.")
+            return
+        }
+
+        try {
+            setLoading(true)
+            await deleteAccount()
+            handleLogout()
+        } catch (err) {
+            setError(err.response?.data?.error || 'Failed to delete account')
+            setLoading(false)
+        }
     }
 
     // Validation helpers
@@ -239,6 +259,23 @@ function Dashboard() {
                         ))}
                     </div>
                 )}
+
+                <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+                    <div style={{ padding: '2rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.1)' }}>
+                        <h3 style={{ color: 'var(--error)', marginBottom: '0.5rem' }}>Danger Zone</h3>
+                        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                            Permanently delete your account and all your data. This action is irreversible.
+                        </p>
+                        <button 
+                            onClick={handleDeleteAccount} 
+                            className="btn btn-danger btn-sm"
+                            style={{ minWidth: '200px' }}
+                            disabled={loading}
+                        >
+                            🗑️ Delete My Entire Account
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Share Modal - Email sharing */}

@@ -34,6 +34,7 @@ api.interceptors.response.use(
 // Auth APIs
 export const register = (data) => api.post('/auth/register', data)
 export const login = (data) => api.post('/auth/login', data)
+export const deleteAccount = () => api.delete('/auth/account')
 
 // File APIs
 export const uploadFile = (formData) => api.post('/files/upload', formData, {

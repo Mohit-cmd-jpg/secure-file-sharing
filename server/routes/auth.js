@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const File = require('../models/File');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -116,6 +118,26 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Login failed. Please try again.' });
+    }
+});
+
+// DELETE /auth/account
+router.delete('/account', auth, async (req, res) => {
+    try {
+        // 1. Delete all files owned by the user
+        await File.deleteMany({ owner: req.userId });
+
+        // 2. Delete the user
+        const user = await User.findByIdAndDelete(req.userId);
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'Account and associated data deleted successfully' });
+    } catch (error) {
+        console.error('Account deletion error:', error);
+        res.status(500).json({ error: 'Failed to delete account' });
     }
 });
 
