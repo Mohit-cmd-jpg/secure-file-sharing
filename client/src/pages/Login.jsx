@@ -63,6 +63,11 @@ function Login() {
     return (
         <div className="auth-container">
             <div className="auth-card">
+                <div style={{ marginBottom: '1rem' }}>
+                    <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                        ← Back to Home
+                    </Link>
+                </div>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔒</div>
                     <h1 style={{ marginBottom: '0.5rem' }}>SecureShare</h1>
