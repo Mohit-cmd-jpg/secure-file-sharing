@@ -2,7 +2,9 @@
 
 A modern, high-performance MERN application for secure file sharing, decentralized storage, and controlled access management. Built with a focus on security, data integrity, and premium user experience.
 
-![Front Page](docs/images/frontpage.png)
+| Front Page | User Dashboard |
+| :---: | :---: |
+| ![Front Page](docs/images/Frontpage.png) | ![Dashboard](docs/images/Dashboard.png) |
 
 ## 🌟 Key Features
 
