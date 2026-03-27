@@ -487,8 +487,8 @@ a:hover {
   line-height: 1;
 }
 
-/* Responsive - Mobile First */
-@media (max-width: 420px) {
+/* Responsive - Mobile & Tablet */
+@media (max-width: 768px) {
   /* Container & spacing */
   .container {
     padding: 0 1rem;
@@ -678,45 +678,13 @@ a:hover {
     flex-basis: auto;
     font-size: 0.75rem;
   }
-}
 
-@media (min-width: 421px) and (max-width: 768px) {
-  /* Tablet sizing */
-  .container {
-    padding: 0 1.25rem;
-  }
-
-  .auth-card {
-    max-width: 100%;
-  }
-
-  .files-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-  }
-
-  .navbar-content {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .file-actions {
-    flex-wrap: wrap;
-  }
-
-  .file-actions .btn {
-    flex: 1 1 calc(50% - 0.25rem);
-    min-width: 100px;
-  }
-
-  .modal {
-    max-width: 90%;
-  }
-
-  .btn {
-    min-height: 40px;
+  .step-arrow {
+    display: none !important;
   }
 }
+
+
 
 @media (min-width: 769px) {
   /* Desktop - default styles already optimal */

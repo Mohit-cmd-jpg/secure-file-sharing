@@ -188,7 +188,7 @@ function Home() {
                                         {step.description}
                                     </p>
                                     {index < steps.length - 1 && (
-                                        <div style={{
+                                        <div className="step-arrow" style={{
                                             position: 'absolute',
                                             right: '-1rem',
                                             top: '30px',
