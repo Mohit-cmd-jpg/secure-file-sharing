@@ -1,57 +1,68 @@
-# SecureShare - File Sharing
+# SecureShare 🔒
 
-A minimal MERN application for secure file upload, controlled sharing, and file management.
+A modern, high-performance MERN application for secure file sharing, decentralized storage, and controlled access management. Built with a focus on security, data integrity, and premium user experience.
 
-## 🎯 Core Features
+![Front Page](docs/images/frontpage.png)
 
-- **User Authentication** - JWT-based register/login
-- **Secure File Upload** - Upload to IPFS via Pinata (max 10MB)
-- **Controlled Sharing** - Share files with other users by email
-- **File Management** - Remove uploaded files, view shared files, and revoke access
+## 🌟 Key Features
 
-## 🏗️ Architecture
+### 🚀 Core Functionality
+- **Secure File Upload**: Upload files up to 10MB directly to IPFS via Pinata.
+- **Controlled Sharing**: Share files with specific users using only their email addresses.
+- **File Management**: Full control over your library—preview, download, or permanently remove your files.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         FRONTEND (Vercel)                       │
-│  React + Vite                                                   │
-│  Pages: Login, Register, Dashboard, Upload, SharedWithMe        │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-               ┌───────────────┴───────────────┐
-               ▼                               ▼
- ┌─────────────────────────┐         ┌─────────────────────────┐
- │   BACKEND (Render)      │         │  Pinata (IPFS)          │
- │   Express + MongoDB     │         │                         │
- │                         │         │                         │
- │   /auth/register,login  │         │                         │
- │   /files/upload,share   │         │                         │
- │   /files/:id (delete)   │         │                         │
- └─────────────────────────┘         └─────────────────────────┘
-```
+### 🛡️ Security & Integrity
+- **JWT Authentication**: Robust session management with standard 2-hour timeouts.
+- **Atomic Transactions**: MongoDB transactions ensure account deletion and data removal happen safely or not at all.
+- **Secure Middleware**: Hardened backend with mandatory environment variable validation for production readiness.
+- **Data Privacy**: Users have total control over who can view their files.
 
-## 📁 Project Structure
+### 📱 Premium UX/UI
+- **Bright Design System**: A vibrant, modern color palette designed to WOW users.
+- **Mobile Responsive**: Fully optimized for phones, tablets, and desktops (breakpoints up to 768px).
+- **Interactive Previews**: Seamlessly preview images, videos, and text files without downloading.
 
-```
-/client          → React frontend
-/server          → Express backend
+## 🏗️ Technical Architecture
+
+```mermaid
+graph TD
+    User((User)) <--> Frontend[React + Vite]
+    Frontend <--> Backend[Express + Node.js]
+    Backend <--> DB[(MongoDB)]
+    Backend <--> IPFS[Pinata IPFS Service]
 ```
 
-## 🚀 Quick Start
+## 📂 Project Structure
 
-### 1. Install All Dependencies
+- `client/` - React frontend (Vite)
+- `server/` - Express backend (Node.js)
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account (or local MongoDB)
+- [Pinata](https://www.pinata.cloud/) API Key & Secret
+
+### 1. Installation
 ```bash
-npm run install:all
+# Install root dependencies
+npm install
+
+# Install client and server dependencies
+cd client && npm install
+cd ../server && npm install
 ```
 
-### 2. Setup Environment Variables
+### 2. Environment Setup
 
 **server/.env:**
 ```env
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=your-secret
-PINATA_API_KEY=xxx
-PINATA_SECRET_KEY=xxx
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_random_secret
+PINATA_API_KEY=your_pinata_api_key
+PINATA_SECRET_KEY=your_pinata_secret_key
+PORT=5000
 ```
 
 **client/.env:**
@@ -59,14 +70,14 @@ PINATA_SECRET_KEY=xxx
 VITE_API_URL=http://localhost:5000
 ```
 
-### 3. Run Locally
+### 3. Running Locally
 ```bash
-# Terminal 1
+# Start backend (from root)
 npm run dev:server
 
-# Terminal 2
+# Start frontend (from root)
 npm run dev:client
 ```
 
 ## 📝 License
-MIT
+MIT License. Built for Secure File Sharing.
