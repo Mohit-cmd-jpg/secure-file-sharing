@@ -5,28 +5,28 @@
 }
 
 :root {
-  --primary: #8b5cf6;
-  --primary-dark: #7c3aed;
-  --secondary: #ec4899;
-  --accent: #14b8a6;
-  --background: #f8fafc;
+  --primary: #ff6b6b;
+  --primary-dark: #fa5252;
+  --secondary: #feca57;
+  --accent: #ff9ff3;
+  --background: #fffdf9;
   --surface: #ffffff;
-  --surface-light: #f1f5f9;
-  --text: #1e293b;
-  --text-muted: #64748b;
-  --error: #ef4444;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --border: #e2e8f0;
-  --gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #14b8a6 100%);
-  --gradient-alt: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  --surface-light: #fff2e3;
+  --text: #2d3436;
+  --text-muted: #636e72;
+  --error: #ff7675;
+  --success: #55efc4;
+  --warning: #fdcb6e;
+  --border: #ffeaa7;
+  --gradient: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
+  --gradient-alt: linear-gradient(135deg, #feca57 0%, #ff6b6b 100%);
   
   /* Additional CSS variables for consistency */
-  --color-error: #ef4444;
-  --color-success: #10b981;
-  --color-primary: #8b5cf6;
-  --bg-secondary: #f1f5f9;
-  --border-color: #e2e8f0;
+  --color-error: #ff7675;
+  --color-success: #55efc4;
+  --color-primary: #ff6b6b;
+  --bg-secondary: #fff2e3;
+  --border-color: #ffeaa7;
 }
 
 body {

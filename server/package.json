@@ -1,7 +1,7 @@
 {
   "name": "secure-file-sharing-server",
   "version": "1.0.0",
-  "description": "Backend for secure file sharing with IPFS and blockchain",
+  "description": "Backend for secure file sharing with IPFS",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

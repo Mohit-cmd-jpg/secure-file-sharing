@@ -10,14 +10,9 @@ function Dashboard() {
     const [error, setError] = useState('')
     const [shareModal, setShareModal] = useState(null)
     const [shareEmail, setShareEmail] = useState('')
-    const [grantModal, setGrantModal] = useState(null)
-    const [grantWallet, setGrantWallet] = useState('')
     const [previewModal, setPreviewModal] = useState(null)
-    const [verifyResult, setVerifyResult] = useState(null)
     const [sharing, setSharing] = useState(false)
-    const [granting, setGranting] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
-    const [filterType, setFilterType] = useState('all') // all, onchain, offchain
 
     const user = JSON.parse(localStorage.getItem('user') || '{}')
 
@@ -50,9 +45,7 @@ function Dashboard() {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     }
 
-    const validateWalletAddress = (address) => {
-        return /^0x[a-fA-F0-9]{40}$/.test(address)
-    }
+
 
     const handleShare = async (e) => {
         e.preventDefault()
@@ -107,11 +100,7 @@ function Dashboard() {
 
     // Filter and search
     const filteredFiles = files.filter(file => {
-        const matchesSearch = file.name.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesFilter = filterType === 'all' || 
-                             (filterType === 'onchain' && file.blockchainFileId) || 
-                             (filterType === 'offchain' && !file.blockchainFileId)
-        return matchesSearch && matchesFilter
+        return file.name.toLowerCase().includes(searchTerm.toLowerCase())
     })
 
     return (
@@ -150,16 +139,7 @@ function Dashboard() {
                     </div>
                 )}
 
-                {verifyResult && (
-                    <div className={`alert ${verifyResult.success ? 'alert-success' : 'alert-error'}`}>
-                        <div>
-                            <strong>{verifyResult.message}</strong>
-                            {verifyResult.timestamp && <p style={{ marginTop: '0.5rem' }}>📅 {verifyResult.timestamp}</p>}
-                            {verifyResult.owner && <p style={{ marginTop: '0.25rem', fontSize: '0.9rem', wordBreak: 'break-all' }}>👤 {verifyResult.owner}</p>}
-                        </div>
-                        <button onClick={() => setVerifyResult(null)} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
-                    </div>
-                )}
+
 
                 {/* Search and Filter */}
                 {files.length > 0 && (
@@ -171,15 +151,7 @@ function Dashboard() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             style={{ flex: 1, minWidth: '250px', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
                         />
-                        <select
-                            value={filterType}
-                            onChange={(e) => setFilterType(e.target.value)}
-                            style={{ padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
-                        >
-                            <option value="all">All Files</option>
-                            <option value="onchain">On Blockchain ⛓️</option>
-                            <option value="offchain">Local Only 💾</option>
-                        </select>
+
                     </div>
                 )}
 

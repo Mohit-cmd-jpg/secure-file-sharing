@@ -189,11 +189,7 @@ function FilePreviewModal({ file, isOpen, onClose }) {
                                 <p>📊 {formatSize(file.size)}</p>
                                 <p>📅 {new Date(file.uploadedAt).toLocaleDateString()}</p>
                             </div>
-                            {file.blockchainFileId && (
-                                <div style={{ fontSize: '0.875rem', color: 'var(--success)' }}>
-                                    <p>⛓️ Blockchain ID: {file.blockchainFileId}</p>
-                                </div>
-                            )}
+
                         </div>
                     </>
                 )}

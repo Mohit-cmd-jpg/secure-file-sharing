@@ -45,8 +45,5 @@ export const getFileById = (id) => api.get(`/files/${id}`)
 export const shareFile = (data) => api.post('/files/share', data)
 export const deleteFile = (id) => api.delete(`/files/${id}`)
 export const revokeAccess = (data) => api.delete('/files/revoke', { data })
-export const updateBlockchainId = (data) => api.put('/files/blockchain-id', data)
-export const grantBlockchainAccess = (data) => api.post('/files/blockchain-grant', data)
-export const revokeBlockchainAccess = (data) => api.post('/files/blockchain-revoke', data)
 
 export default api

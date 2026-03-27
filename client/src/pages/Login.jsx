@@ -66,7 +66,7 @@ function Login() {
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔒</div>
                     <h1 style={{ marginBottom: '0.5rem' }}>SecureShare</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Secure file sharing with blockchain verification</p>
+                    <p style={{ color: 'var(--text-muted)' }}>Secure file sharing</p>
                 </div>
 
                 {error && (
@@ -142,7 +142,7 @@ function Login() {
 
                 <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                     <p style={{ marginBottom: '0.5rem' }}>✓ End-to-end encrypted file sharing</p>
-                    <p style={{ marginBottom: '0.5rem' }}>✓ Blockchain-verified integrity</p>
+
                     <p>✓ IPFS-backed distributed storage</p>
                 </div>
             </div>

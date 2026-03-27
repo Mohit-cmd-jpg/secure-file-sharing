@@ -7,8 +7,7 @@ function Register() {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        confirmPassword: '',
-        walletAddress: ''
+        confirmPassword: ''
     })
     const [errors, setErrors] = useState({})
     const [error, setError] = useState('')
@@ -16,7 +15,6 @@ function Register() {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
-    const [connectingWallet, setConnectingWallet] = useState(false)
 
     const validateForm = () => {
         const newErrors = {}
@@ -41,10 +39,6 @@ function Register() {
             newErrors.confirmPassword = 'Passwords do not match'
         }
 
-        if (formData.walletAddress && !/^0x[a-fA-F0-9]{40}$/.test(formData.walletAddress)) {
-            newErrors.walletAddress = 'Invalid Ethereum wallet address'
-        }
-
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
@@ -63,8 +57,7 @@ function Register() {
         try {
             const response = await register({
                 email: formData.email,
-                password: formData.password,
-                walletAddress: formData.walletAddress || null
+                password: formData.password
             })
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('user', JSON.stringify(response.data.user))
@@ -86,29 +79,6 @@ function Register() {
         }
     }
 
-    const connectWallet = async () => {
-        if (typeof window.ethereum === 'undefined') {
-            setError('Please install MetaMask to connect a wallet')
-            return
-        }
-
-        setConnectingWallet(true)
-        setError('')
-
-        try {
-            const accounts = await window.ethereum.request({
-                method: 'eth_requestAccounts'
-            })
-            setFormData({ ...formData, walletAddress: accounts[0] })
-            setSuccess(`✓ Wallet connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`)
-            setTimeout(() => setSuccess(''), 3000)
-        } catch (err) {
-            setError('Failed to connect wallet. ' + err.message)
-        } finally {
-            setConnectingWallet(false)
-        }
-    }
-
     const passwordStrength = () => {
         let strength = 0
         if (formData.password.length >= 8) strength++
@@ -125,7 +95,7 @@ function Register() {
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔒</div>
                     <h1 style={{ marginBottom: '0.5rem' }}>Create Account</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Start sharing files securely with blockchain verification</p>
+                    <p style={{ color: 'var(--text-muted)' }}>Start sharing files securely</p>
                 </div>
 
                 {error && (
@@ -241,33 +211,6 @@ function Register() {
                             </button>
                         </div>
                         {errors.confirmPassword && <small style={{ color: 'var(--color-error)' }}>⚠️ {errors.confirmPassword}</small>}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="walletAddress">Wallet Address (Optional)</label>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <input
-                                id="walletAddress"
-                                type="text"
-                                name="walletAddress"
-                                placeholder="0x..."
-                                value={formData.walletAddress}
-                                onChange={handleChange}
-                                style={{ flex: 1 }}
-                                disabled={loading}
-                                className={errors.walletAddress ? 'input-error' : ''}
-                            />
-                            <button 
-                                type="button" 
-                                className="btn btn-secondary" 
-                                onClick={connectWallet}
-                                disabled={loading || connectingWallet}
-                            >
-                                {connectingWallet ? '⏳' : '🔗'}
-                            </button>
-                        </div>
-                        {errors.walletAddress && <small style={{ color: 'var(--color-error)' }}>⚠️ {errors.walletAddress}</small>}
-                        <small style={{ color: 'var(--text-muted)' }}>Connect MetaMask to auto-fill your wallet address</small>
                     </div>
 
                     <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>

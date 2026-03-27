@@ -95,8 +95,7 @@ router.post('/upload', auth, upload.single('file'), async (req, res) => {
             ipfsHash,
             size: req.file.size,
             mimeType: req.file.mimetype,
-            owner: req.userId,
-            blockchainFileId: req.body.blockchainFileId || null
+            owner: req.userId
         });
 
         await file.save();
@@ -132,7 +131,6 @@ router.get('/my-files', auth, async (req, res) => {
             size: f.size,
             mimeType: f.mimeType,
             sharedWith: f.sharedWith.map(u => u.email),
-            blockchainFileId: f.blockchainFileId,
             ipfsUrl: `https://gateway.pinata.cloud/ipfs/${f.ipfsHash}`,
             uploadedAt: f.uploadedAt
         })));
@@ -187,7 +185,6 @@ router.get('/:id', auth, async (req, res) => {
             mimeType: file.mimeType,
             owner: file.owner,
             sharedWith: file.sharedWith,
-            blockchainFileId: file.blockchainFileId,
             ipfsUrl: `https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`,
             uploadedAt: file.uploadedAt
         });
@@ -282,93 +279,7 @@ router.delete('/revoke', auth, async (req, res) => {
     }
 });
 
-// PUT /files/blockchain-id
-router.put('/blockchain-id', auth, async (req, res) => {
-    try {
-        const { fileId, blockchainFileId } = req.body;
 
-        if (!fileId || blockchainFileId === undefined) {
-            return res.status(400).json({ error: 'File ID and blockchain ID are required' });
-        }
-
-        const file = await File.findOneAndUpdate(
-            { _id: fileId, owner: req.userId },
-            { blockchainFileId },
-            { new: true }
-        );
-
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        res.json({ message: 'Blockchain ID updated', file });
-    } catch (error) {
-        console.error('Update blockchain ID error:', error);
-        res.status(500).json({ error: 'Failed to update blockchain ID' });
-    }
-});
-
-// POST /files/blockchain-grant - Grant access on blockchain
-router.post('/blockchain-grant', auth, async (req, res) => {
-    try {
-        const { fileId, walletAddress, transactionHash } = req.body;
-
-        if (!fileId || !walletAddress) {
-            return res.status(400).json({ error: 'File ID and wallet address are required' });
-        }
-
-        const file = await File.findOne({ _id: fileId, owner: req.userId });
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        if (!file.blockchainFileId) {
-            return res.status(400).json({ error: 'File is not registered on blockchain' });
-        }
-
-        res.json({
-            message: 'Access grant recorded',
-            transactionHash,
-            fileId: file._id,
-            blockchainFileId: file.blockchainFileId,
-            walletAddress
-        });
-    } catch (error) {
-        console.error('Grant blockchain access error:', error);
-        res.status(500).json({ error: 'Failed to record access grant' });
-    }
-});
-
-// POST /files/blockchain-revoke - Revoke access on blockchain
-router.post('/blockchain-revoke', auth, async (req, res) => {
-    try {
-        const { fileId, walletAddress, transactionHash } = req.body;
-
-        if (!fileId || !walletAddress) {
-            return res.status(400).json({ error: 'File ID and wallet address are required' });
-        }
-
-        const file = await File.findOne({ _id: fileId, owner: req.userId });
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        if (!file.blockchainFileId) {
-            return res.status(400).json({ error: 'File is not registered on blockchain' });
-        }
-
-        res.json({
-            message: 'Access revoke recorded',
-            transactionHash,
-            fileId: file._id,
-            blockchainFileId: file.blockchainFileId,
-            walletAddress
-        });
-    } catch (error) {
-        console.error('Revoke blockchain access error:', error);
-        res.status(500).json({ error: 'Failed to record access revoke' });
-    }
-});
 
 // Error handling middleware for multer
 router.use((error, req, res, next) => {

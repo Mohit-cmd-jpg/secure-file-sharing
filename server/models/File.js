@@ -26,10 +26,6 @@ const fileSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    blockchainFileId: {
-        type: Number,
-        default: null
-    },
     uploadedAt: {
         type: Date,
         default: Date.now

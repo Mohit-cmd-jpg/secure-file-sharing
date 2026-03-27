@@ -24,11 +24,6 @@ function Home() {
             description: 'Share files with others using just their email address'
         },
         {
-            icon: '⛓️',
-            title: 'Blockchain Verified',
-            description: 'Store file hashes on Ethereum for integrity verification'
-        },
-        {
             icon: '📁',
             title: 'File Management',
             description: 'Organize, search, and manage all your files in one place'
@@ -54,17 +49,12 @@ function Home() {
         {
             number: '2',
             title: 'Upload Files',
-            description: 'Upload your files and optionally register on blockchain'
+            description: 'Upload your files securely'
         },
         {
             number: '3',
             title: 'Share Securely',
             description: 'Share with others and control who has access'
-        },
-        {
-            number: '4',
-            title: 'Verify Integrity',
-            description: 'Use blockchain to verify file authenticity anytime'
         }
     ]
 
@@ -94,10 +84,10 @@ function Home() {
                     <div className="container" style={{ maxWidth: '800px' }}>
                         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🔐</div>
                         <h1 style={{ fontSize: '3.5rem', fontWeight: '800', marginBottom: '1rem', background: 'var(--gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                            Secure File Sharing with Blockchain
+                            Secure File Sharing
                         </h1>
                         <p style={{ fontSize: '1.25rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                            Upload, share, and verify your files with blockchain-backed integrity. Decentralized, secure, and fully under your control.
+                            Upload, share, and manage your files. Decentralized, secure, and fully under your control.
                         </p>
                         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <button onClick={() => navigate('/register')} className="btn btn-primary" style={{ width: 'auto', fontSize: '1.1rem', padding: '1rem 2rem' }}>
@@ -247,10 +237,10 @@ function Home() {
                 }}>
                     <div className="container">
                         <p style={{ marginBottom: '1rem' }}>
-                            🔒 SecureShare © 2026 • Blockchain-Verified File Sharing
+                            🔒 SecureShare © 2026 • Secure File Sharing
                         </p>
                         <p>
-                            Built with React, Express, MongoDB, IPFS & Ethereum
+                            Built with React, Express, MongoDB & IPFS
                         </p>
                     </div>
                 </footer>
